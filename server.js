@@ -77,67 +77,67 @@ app.use(
     {
       "/api/summarize": {
         price: "$0.01",
-        network: "base-sepolia",
+        network: "base",
         config: { description: "Summarize any text into key points" },
       },
       "/api/translate": {
         price: "$0.02",
-        network: "base-sepolia",
+        network: "base",
         config: { description: "Translate text to any language" },
       },
       "/api/explain-code": {
         price: "$0.02",
-        network: "base-sepolia",
+        network: "base",
         config: { description: "Explain what code does in plain English" },
       },
       "/api/write": {
         price: "$0.03",
-        network: "base-sepolia",
+        network: "base",
         config: { description: "Generate written content" },
       },
       "/api/analyze-sentiment": {
         price: "$0.01",
-        network: "base-sepolia",
+        network: "base",
         config: { description: "Analyze the sentiment of text" },
       },
       "/api/chat": {
         price: "$0.02",
-        network: "base-sepolia",
+        network: "base",
         config: { description: "General Q&A - ask anything" },
       },
       "/api/rewrite": {
         price: "$0.02",
-        network: "base-sepolia",
+        network: "base",
         config: { description: "Improve and rewrite text professionally" },
       },
       "/api/proofread": {
         price: "$0.01",
-        network: "base-sepolia",
+        network: "base",
         config: { description: "Fix grammar, spelling, and punctuation" },
       },
       "/api/brainstorm": {
         price: "$0.03",
-        network: "base-sepolia",
+        network: "base",
         config: { description: "Generate creative ideas on any topic" },
       },
       "/api/eli5": {
         price: "$0.01",
-        network: "base-sepolia",
+        network: "base",
         config: { description: "Explain anything like I'm 5 years old" },
       },
       "/api/extract-keywords": {
         price: "$0.01",
-        network: "base-sepolia",
+        network: "base",
         config: { description: "Extract keywords and key phrases from text" },
       },
       "/api/generate-title": {
         price: "$0.01",
-        network: "base-sepolia",
+        network: "base",
         config: { description: "Generate catchy headlines and titles" },
       },
       "/api/compare": {
         price: "$0.02",
-        network: "base-sepolia",
+        network: "base",
         config: { description: "Compare two things with pros and cons" },
       },
     },
@@ -306,7 +306,7 @@ app.get("/api", (req, res) => {
   res.json({
     name: "x402 AI Gateway",
     description: "AI API endpoints, pay-per-call with USDC via x402",
-    network: "base-sepolia",
+    network: "base",
     payTo: WALLET_ADDRESS,
     endpoints: [
       { method: "POST", path: "/api/summarize", price: "$0.01", description: "Summarize text" },
