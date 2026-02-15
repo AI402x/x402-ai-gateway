@@ -299,7 +299,7 @@ app.post("/api/compare", async (req, res) => {
 // === FREE ENDPOINTS ===
 
 app.get("/health", (req, res) => {
-  res.json({ status: "online", network: "base-sepolia", provider: AI_PROVIDER, endpoints: 13 });
+  res.json({ status: "online", network: "base", provider: AI_PROVIDER, endpoints: 13 });
 });
 
 app.get("/api", (req, res) => {
