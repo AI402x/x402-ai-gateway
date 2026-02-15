@@ -12,7 +12,7 @@ const PORT = process.env.PORT || 3000;
 const AI_PROVIDER = process.env.AI_PROVIDER || "openrouter";
 const facilitator = { url: process.env.FACILITATOR_URL || "https://x402.org/facilitator" };
 
-// === FREE AI PROVIDERS ===
+// === AI PROVIDERS ===
 
 async function callAI(prompt) {
   if (AI_PROVIDER === "gemini") return await callGemini(prompt);
@@ -145,7 +145,7 @@ app.use(
   )
 );
 
-// === ORIGINAL 5 PAID ENDPOINTS ===
+// === PAID ENDPOINTS ===
 
 app.post("/api/summarize", async (req, res) => {
   try {
@@ -202,8 +202,6 @@ app.post("/api/analyze-sentiment", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
-
-// === 8 NEW PAID ENDPOINTS ===
 
 app.post("/api/chat", async (req, res) => {
   try {
@@ -296,6 +294,33 @@ app.post("/api/compare", async (req, res) => {
   }
 });
 
+// === AGENT DISCOVERY ===
+
+app.get("/.well-known/x402", (req, res) => {
+  res.json({
+    x402: true,
+    version: 1,
+    network: "base",
+    facilitator: "https://x402.org/facilitator",
+    payTo: WALLET_ADDRESS,
+    endpoints: [
+      { path: "/api/summarize", method: "POST", price: "$0.01", description: "Summarize text" },
+      { path: "/api/translate", method: "POST", price: "$0.02", description: "Translate to any language" },
+      { path: "/api/explain-code", method: "POST", price: "$0.02", description: "Explain code" },
+      { path: "/api/write", method: "POST", price: "$0.03", description: "Generate content" },
+      { path: "/api/analyze-sentiment", method: "POST", price: "$0.01", description: "Sentiment analysis" },
+      { path: "/api/chat", method: "POST", price: "$0.02", description: "General Q&A" },
+      { path: "/api/rewrite", method: "POST", price: "$0.02", description: "Improve/rewrite text" },
+      { path: "/api/proofread", method: "POST", price: "$0.01", description: "Fix grammar and spelling" },
+      { path: "/api/brainstorm", method: "POST", price: "$0.03", description: "Generate ideas" },
+      { path: "/api/eli5", method: "POST", price: "$0.01", description: "Explain like I'm 5" },
+      { path: "/api/extract-keywords", method: "POST", price: "$0.01", description: "Extract keywords" },
+      { path: "/api/generate-title", method: "POST", price: "$0.01", description: "Generate headlines" },
+      { path: "/api/compare", method: "POST", price: "$0.02", description: "Compare two things" },
+    ],
+  });
+});
+
 // === LANDING PAGE ===
 
 app.get("/", (req, res) => {
@@ -381,7 +406,7 @@ code{background:#1e1e1e;color:#6366f1;padding:2px 8px;border-radius:4px;font-siz
 </html>`);
 });
 
-// === FREE ENDPOINTS ===
+// === DISCOVERY ENDPOINTS ===
 
 app.get("/health", (req, res) => {
   res.json({ status: "online", network: "base", provider: AI_PROVIDER, endpoints: 13 });
@@ -408,9 +433,10 @@ app.get("/api", (req, res) => {
       { method: "POST", path: "/api/generate-title", price: "$0.01", description: "Generate headlines" },
       { method: "POST", path: "/api/compare", price: "$0.02", description: "Compare two things" },
     ],
-    free: [
+    discovery: [
       { method: "GET", path: "/health" },
       { method: "GET", path: "/api" },
+      { method: "GET", path: "/.well-known/x402" },
     ],
   });
 });
