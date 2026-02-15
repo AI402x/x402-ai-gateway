@@ -296,6 +296,91 @@ app.post("/api/compare", async (req, res) => {
   }
 });
 
+// === LANDING PAGE ===
+
+app.get("/", (req, res) => {
+  res.send(`<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>x402 AI Gateway</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a0a0a;color:#e0e0e0;min-height:100vh}
+.hero{text-align:center;padding:60px 20px 40px}
+.hero h1{font-size:2.5em;color:#fff;margin-bottom:10px}
+.hero h1 span{color:#6366f1}
+.hero p{font-size:1.2em;color:#888;margin-bottom:30px}
+.badge{display:inline-block;background:#16a34a;color:#fff;padding:6px 16px;border-radius:20px;font-size:0.9em;margin-bottom:20px}
+.stats{display:flex;justify-content:center;gap:40px;margin:30px 0;flex-wrap:wrap}
+.stat{text-align:center}
+.stat .num{font-size:2em;color:#6366f1;font-weight:bold}
+.stat .label{color:#888;font-size:0.9em}
+.endpoints{max-width:800px;margin:0 auto;padding:20px}
+.endpoints h2{text-align:center;margin-bottom:20px;color:#fff}
+.endpoint{background:#141414;border:1px solid #222;border-radius:10px;padding:16px 20px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center}
+.endpoint:hover{border-color:#6366f1}
+.ep-left{display:flex;align-items:center;gap:12px}
+.method{background:#6366f1;color:#fff;padding:3px 10px;border-radius:5px;font-size:0.8em;font-weight:bold}
+.path{color:#fff;font-weight:500}
+.desc{color:#888;font-size:0.85em}
+.price{color:#16a34a;font-weight:bold;font-size:1.1em}
+.how{max-width:800px;margin:40px auto;padding:20px}
+.how h2{text-align:center;margin-bottom:20px;color:#fff}
+.step{background:#141414;border:1px solid #222;border-radius:10px;padding:20px;margin-bottom:15px}
+.step h3{color:#6366f1;margin-bottom:8px}
+.step p{color:#888;line-height:1.6}
+code{background:#1e1e1e;color:#6366f1;padding:2px 8px;border-radius:4px;font-size:0.9em}
+.footer{text-align:center;padding:40px;color:#444;font-size:0.85em}
+.cta{text-align:center;margin:30px 0}
+.cta a{background:#6366f1;color:#fff;padding:12px 30px;border-radius:8px;text-decoration:none;font-weight:bold;font-size:1.1em}
+.cta a:hover{background:#4f46e5}
+</style>
+</head>
+<body>
+<div class="hero">
+<div class="badge">LIVE ON BASE MAINNET</div>
+<h1><span>x402</span> AI Gateway</h1>
+<p>Pay-per-call AI APIs powered by USDC micropayments</p>
+<div class="stats">
+<div class="stat"><div class="num">13</div><div class="label">AI Endpoints</div></div>
+<div class="stat"><div class="num">$0.01</div><div class="label">Starting Price</div></div>
+<div class="stat"><div class="num">0%</div><div class="label">Platform Fees</div></div>
+<div class="stat"><div class="num">USDC</div><div class="label">Base Network</div></div>
+</div>
+</div>
+<div class="cta"><a href="/api">View API Directory (JSON)</a></div>
+<div class="endpoints">
+<h2>Available Endpoints</h2>
+<div class="endpoint"><div class="ep-left"><span class="method">POST</span><span class="path">/api/summarize</span><span class="desc">Summarize text</span></div><span class="price">$0.01</span></div>
+<div class="endpoint"><div class="ep-left"><span class="method">POST</span><span class="path">/api/translate</span><span class="desc">Translate to any language</span></div><span class="price">$0.02</span></div>
+<div class="endpoint"><div class="ep-left"><span class="method">POST</span><span class="path">/api/explain-code</span><span class="desc">Explain code</span></div><span class="price">$0.02</span></div>
+<div class="endpoint"><div class="ep-left"><span class="method">POST</span><span class="path">/api/write</span><span class="desc">Generate content</span></div><span class="price">$0.03</span></div>
+<div class="endpoint"><div class="ep-left"><span class="method">POST</span><span class="path">/api/analyze-sentiment</span><span class="desc">Sentiment analysis</span></div><span class="price">$0.01</span></div>
+<div class="endpoint"><div class="ep-left"><span class="method">POST</span><span class="path">/api/chat</span><span class="desc">General Q&A</span></div><span class="price">$0.02</span></div>
+<div class="endpoint"><div class="ep-left"><span class="method">POST</span><span class="path">/api/rewrite</span><span class="desc">Improve/rewrite text</span></div><span class="price">$0.02</span></div>
+<div class="endpoint"><div class="ep-left"><span class="method">POST</span><span class="path">/api/proofread</span><span class="desc">Fix grammar & spelling</span></div><span class="price">$0.01</span></div>
+<div class="endpoint"><div class="ep-left"><span class="method">POST</span><span class="path">/api/brainstorm</span><span class="desc">Generate ideas</span></div><span class="price">$0.03</span></div>
+<div class="endpoint"><div class="ep-left"><span class="method">POST</span><span class="path">/api/eli5</span><span class="desc">Explain like I'm 5</span></div><span class="price">$0.01</span></div>
+<div class="endpoint"><div class="ep-left"><span class="method">POST</span><span class="path">/api/extract-keywords</span><span class="desc">Extract keywords</span></div><span class="price">$0.01</span></div>
+<div class="endpoint"><div class="ep-left"><span class="method">POST</span><span class="path">/api/generate-title</span><span class="desc">Generate headlines</span></div><span class="price">$0.01</span></div>
+<div class="endpoint"><div class="ep-left"><span class="method">POST</span><span class="path">/api/compare</span><span class="desc">Compare two things</span></div><span class="price">$0.02</span></div>
+</div>
+<div class="how">
+<h2>How It Works</h2>
+<div class="step"><h3>1. Call any endpoint</h3><p>Send a POST request to any endpoint above. You will get a <code>402 Payment Required</code> response with payment details.</p></div>
+<div class="step"><h3>2. Pay with USDC</h3><p>Sign a USDC payment on <code>Base</code> network using the x402 protocol. No gas fees - the facilitator covers them.</p></div>
+<div class="step"><h3>3. Get your result</h3><p>Resend your request with the payment proof in the <code>X-PAYMENT</code> header. Your AI result is returned instantly.</p></div>
+</div>
+<div class="footer">
+<p>Powered by x402 Protocol | Payments on Base Network | USDC</p>
+<p style="margin-top:8px">PayTo: <code>${WALLET_ADDRESS}</code></p>
+</div>
+</body>
+</html>`);
+});
+
 // === FREE ENDPOINTS ===
 
 app.get("/health", (req, res) => {
@@ -336,7 +421,7 @@ app.listen(PORT, () => {
   console.log("==========================================");
   console.log("  x402 AI GATEWAY - RUNNING");
   console.log("  http://localhost:" + PORT);
-  console.log("  Network: Base Sepolia");
+  console.log("  Network: Base Mainnet");
   console.log("  AI: " + AI_PROVIDER);
   console.log("  Paid endpoints: 13");
   console.log("  Wallet: " + WALLET_ADDRESS);
