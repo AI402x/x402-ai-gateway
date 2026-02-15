@@ -13,12 +13,34 @@ const PORT = process.env.PORT || 3000;
 const AI_PROVIDER = process.env.AI_PROVIDER || "openrouter";
 const facilitator = { url: process.env.FACILITATOR_URL || "https://x402.org/facilitator" };
 
-// === AI PROVIDERS ===
+// === AI PROVIDERS WITH AUTO FAILOVER ===
 
 async function callAI(prompt) {
-  if (AI_PROVIDER === "gemini") return await callGemini(prompt);
-  if (AI_PROVIDER === "huggingface") return await callHuggingFace(prompt);
-  return await callOpenRouter(prompt);
+  const providers = [
+    { name: "openrouter", fn: callOpenRouter },
+    { name: "gemini", fn: callGemini },
+    { name: "huggingface", fn: callHuggingFace },
+  ];
+
+  // Try primary provider first
+  if (AI_PROVIDER === "gemini") {
+    providers.unshift(providers.splice(1, 1)[0]);
+  } else if (AI_PROVIDER === "huggingface") {
+    providers.unshift(providers.splice(2, 1)[0]);
+  }
+
+  for (const provider of providers) {
+    try {
+      const result = await provider.fn(prompt);
+      if (result && result.trim().length > 0) {
+        return result;
+      }
+    } catch (err) {
+      console.log("Provider " + provider.name + " failed: " + err.message + " - trying next...");
+    }
+  }
+
+  throw new Error("All AI providers failed. Please try again later.");
 }
 
 async function callOpenRouter(prompt) {
@@ -31,15 +53,16 @@ async function callOpenRouter(prompt) {
     body: JSON.stringify({
       model: "openrouter/free",
       messages: [{ role: "user", content: prompt }],
-      max_tokens: 1000,
+      max_tokens: 2000,
     }),
   });
-  if (!response.ok) throw new Error("OpenRouter error: " + await response.text());
+  if (!response.ok) throw new Error("OpenRouter error: " + response.status);
   const data = await response.json();
   return data.choices[0].message.content;
 }
 
 async function callGemini(prompt) {
+  if (!process.env.GEMINI_API_KEY) throw new Error("No Gemini key");
   const response = await fetch(
     "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=" + process.env.GEMINI_API_KEY,
     {
@@ -48,12 +71,13 @@ async function callGemini(prompt) {
       body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] }),
     }
   );
-  if (!response.ok) throw new Error("Gemini error: " + await response.text());
+  if (!response.ok) throw new Error("Gemini error: " + response.status);
   const data = await response.json();
   return data.candidates[0].content.parts[0].text;
 }
 
 async function callHuggingFace(prompt) {
+  if (!process.env.HF_TOKEN) throw new Error("No HF token");
   const response = await fetch(
     "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.3",
     {
@@ -62,10 +86,10 @@ async function callHuggingFace(prompt) {
         "Authorization": "Bearer " + process.env.HF_TOKEN,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ inputs: prompt, parameters: { max_new_tokens: 500 } }),
+      body: JSON.stringify({ inputs: prompt, parameters: { max_new_tokens: 1000 } }),
     }
   );
-  if (!response.ok) throw new Error("HuggingFace error: " + await response.text());
+  if (!response.ok) throw new Error("HuggingFace error: " + response.status);
   const data = await response.json();
   return Array.isArray(data) ? data[0].generated_text : data.generated_text;
 }
@@ -514,13 +538,13 @@ code{background:#1e1e1e;color:#6366f1;padding:2px 8px;border-radius:4px;font-siz
 // === DISCOVERY ENDPOINTS ===
 
 app.get("/health", (req, res) => {
-  res.json({ status: "online", network: "base", provider: AI_PROVIDER, endpoints: 18 });
+  res.json({ status: "online", network: "base", provider: AI_PROVIDER, failover: true, endpoints: 18 });
 });
 
 app.get("/api", (req, res) => {
   res.json({
     name: "x402 AI Gateway",
-    description: "AI and utility API endpoints, pay-per-call with USDC via x402",
+    description: "AI and utility API endpoints, pay-per-call with USDC via x402. Auto-failover across 3 AI providers.",
     network: "base",
     payTo: WALLET_ADDRESS,
     aiEndpoints: [
@@ -561,7 +585,7 @@ app.listen(PORT, () => {
   console.log("  x402 AI GATEWAY - RUNNING");
   console.log("  http://localhost:" + PORT);
   console.log("  Network: Base Mainnet");
-  console.log("  AI: " + AI_PROVIDER);
+  console.log("  AI: " + AI_PROVIDER + " (auto-failover enabled)");
   console.log("  Paid endpoints: 18 (13 AI + 5 utility)");
   console.log("  Wallet: " + WALLET_ADDRESS);
   console.log("==========================================");
